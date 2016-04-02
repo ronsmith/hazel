@@ -1,6 +1,6 @@
 # coding=utf-8
-# Author: rsmith
-# Copyright ©2016 iProspect, All Rights Reserved
+# Author: Ron Smith
+# Copyright ©2016 That Ain't Working, All Rights Reserved
 
 from xbee import ZigBee
 from serial import Serial
