@@ -1,8 +1,7 @@
-Flask
-SQLAlchemy
-Flask-JSGlue
+flask
+sqlalchemy
+flask-jsglue
 pyserial
 click
 requests
 gunicorn
-
