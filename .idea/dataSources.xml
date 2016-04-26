@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="DataSourceManagerImpl" format="xml" hash="39431222">
+  <component name="DataSourceManagerImpl" format="xml" hash="1064578526">
     <data-source source="LOCAL" name="hazel.db" uuid="57010fe9-43c4-425a-8e91-4be4a354bb2c">
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>

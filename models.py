@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 
 
 # Create ORM through reflection
-engine = create_engine('sqlite:///hazel.db', echo=True)
+engine = create_engine('sqlite:///hazel.db') #, echo=True)
 Base = automap_base(bind=engine)
 Base.prepare(engine, reflect=True)
 
@@ -17,7 +17,7 @@ Base.prepare(engine, reflect=True)
 User = Base.classes.User
 Role = Base.classes.Role
 Device = Base.classes.Device
-Type = Base.classes.Type
+DeviceType = Base.classes.DeviceType
 
 
 session = Session(engine)

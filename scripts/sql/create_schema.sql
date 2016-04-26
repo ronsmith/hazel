@@ -1,13 +1,19 @@
 
+DROP TABLE IF EXISTS Device;
+DROP TABLE IF EXISTS DeviceType;
+DROP TABLE IF EXISTS UserRoleAssoc;
+DROP TABLE IF EXISTS Role;
+DROP TABLE IF EXISTS User;
 
-CREATE TABLE user (
+CREATE TABLE User (
   id        INTEGER PRIMARY KEY AUTOINCREMENT,
+  name      TEXT NOT NULL,
   userid    TEXT NOT NULL,
   passwd    TEXT NOT NULL,
   active    INTEGER NOT NULL DEFAULT 1
 );
 
-CREATE TABLE role (
+CREATE TABLE Role (
   id        TEXT NOT NULL PRIMARY KEY,
   name      TEXT NOT NULL
 );
@@ -20,16 +26,17 @@ CREATE TABLE UserRoleAssoc (
   FOREIGN KEY (role_id) REFERENCES role (id) ON DELETE CASCADE
 );
 
-CREATE TABLE device (
-  id        INTEGER PRIMARY KEY AUTOINCREMENT,
-  name      TEXT NOT NULL,
-  address   INTEGER NOT NULL,
-  type_id   INTEGER NOT NULL
-);
-
-CREATE TABLE type (
+CREATE TABLE DeviceType (
   id        INTEGER NOT NULL PRIMARY KEY,
   name      TEXT NOT NULL,
   driver    TEXT NOT NULL
+);
+
+CREATE TABLE Device (
+  id        INTEGER PRIMARY KEY AUTOINCREMENT,
+  name      TEXT NOT NULL,
+  address   INTEGER NOT NULL,
+  type_id   INTEGER NOT NULL,
+  FOREIGN KEY (type_id) REFERENCES DeviceType (id)
 );
 
