@@ -14,6 +14,7 @@ Base.prepare(engine, reflect=True)
 session = Session(engine)
 
 # Create simple aliases for reflected model classes
+Setting = Base.classes.Setting
 User = Base.classes.User
 Role = Base.classes.Role
 Device = Base.classes.Device
@@ -22,6 +23,21 @@ Alert = Base.classes.Alert
 
 
 # Define some nice repr strings for the automapped classes
+
+def _seetting_repr(self):
+    return '<Setting(id=%d, param="%s", value="%s")>' % (self.id, self.param, self.value)
+
+
+def _setting_get_value(param, default=None):
+    s = session.query(Setting).filter_by(param=param).one_or_none()
+    if s and s.value:
+        return s.value
+    return default
+
+
+Setting.__repr__ = _seetting_repr
+Setting.get_value = staticmethod(_setting_get_value)
+
 
 def _user_repr(self):
     return '<User(id=%d, name="%s", userid="%s", active=%s)>' % (self.id, self.name, self.userid, self.active==1)

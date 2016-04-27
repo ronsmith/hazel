@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>HAzel</title>
+        <title>Hazel</title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
@@ -10,8 +10,9 @@
     </head>
     <body>
         <div class="container-fluid">
-            <h1>HAzel</h1>
-            <h2>Home Automation Service</h2>
+            <h1 align="center">Hazel</h1>
+            <h2 align="center">Home Automation Service</h2>
+            <h3 align="center">{{ HOME_ADDRESS }}, {{ HOME_CITY }}, {{ HOME_STATE }}</h3>
         </div>
     </body>
 </html>
