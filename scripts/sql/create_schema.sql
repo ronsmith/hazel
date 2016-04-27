@@ -1,4 +1,5 @@
 
+DROP TABLE IF EXISTS Alert;
 DROP TABLE IF EXISTS Device;
 DROP TABLE IF EXISTS DeviceType;
 DROP TABLE IF EXISTS UserRoleAssoc;
@@ -22,8 +23,8 @@ CREATE TABLE UserRoleAssoc (
   user_id   INTEGER NOT NULL,
   role_id   TEXT NOT NULL,
   PRIMARY KEY (user_id, role_id),
-  FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
-  FOREIGN KEY (role_id) REFERENCES role (id) ON DELETE CASCADE
+  FOREIGN KEY (user_id) REFERENCES User (id) ON DELETE CASCADE,
+  FOREIGN KEY (role_id) REFERENCES Role (id) ON DELETE CASCADE
 );
 
 CREATE TABLE DeviceType (
@@ -40,3 +41,11 @@ CREATE TABLE Device (
   FOREIGN KEY (type_id) REFERENCES DeviceType (id)
 );
 
+CREATE TABLE Alert (
+  id        INTEGER PRIMARY KEY AUTOINCREMENT,
+  device_id INTEGER,
+  severity  INTEGER,
+  message   TEXT NOT NULL,
+  cleared   INTEGER NOT NULL DEFAULT 0,
+  FOREIGN KEY (device_id) REFERENCES Device (id) ON DELETE CASCADE
+);
