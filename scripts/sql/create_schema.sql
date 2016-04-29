@@ -1,10 +1,11 @@
 
+DROP TABLE IF EXISTS UserRoleAssoc;
+DROP TABLE IF EXISTS UserDeviceAssoc;
 DROP TABLE IF EXISTS Alert;
 DROP TABLE IF EXISTS Device;
 DROP TABLE IF EXISTS DeviceType;
-DROP TABLE IF EXISTS UserRoleAssoc;
-DROP TABLE IF EXISTS Role;
 DROP TABLE IF EXISTS User;
+DROP TABLE IF EXISTS Role;
 DROP TABLE IF EXISTS Setting;
 
 CREATE TABLE Setting (
@@ -16,8 +17,8 @@ CREATE TABLE Setting (
 CREATE TABLE User (
   id        INTEGER PRIMARY KEY AUTOINCREMENT,
   name      TEXT NOT NULL,
-  userid    TEXT NOT NULL,
-  passwd    TEXT NOT NULL,
+  username  TEXT NOT NULL,
+  password  TEXT NOT NULL,
   active    INTEGER NOT NULL DEFAULT 1
 );
 
@@ -46,6 +47,14 @@ CREATE TABLE Device (
   address   INTEGER NOT NULL,
   type_id   INTEGER NOT NULL,
   FOREIGN KEY (type_id) REFERENCES DeviceType (id)
+);
+
+CREATE TABLE UserDeviceAssoc (
+  user_id   INTEGER NOT NULL,
+  device_id INTEGER NOT NULL,
+  PRIMARY KEY (user_id, device_id),
+  FOREIGN KEY (user_id) REFERENCES User (id) ON DELETE CASCADE,
+  FOREIGN KEY (device_id) REFERENCES Device (id) ON DELETE CASCADE
 );
 
 CREATE TABLE Alert (

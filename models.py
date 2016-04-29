@@ -2,76 +2,135 @@
 # Author: rsmith
 # Copyright ©2016 iProspect, All Rights Reserved
 
-from sqlalchemy import create_engine, MetaData
-from sqlalchemy.ext.automap import automap_base
-from sqlalchemy.orm import Session
+import logging
+from contextlib import contextmanager
+from sqlalchemy import create_engine, Table, Column, Integer, String, Boolean, ForeignKey
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker, relationship
 
+logger = logging.getLogger(__name__)
 
-# Create ORM through reflection
 engine = create_engine('sqlite:///hazel.db') #, echo=True)
-Base = automap_base(bind=engine)
-Base.prepare(engine, reflect=True)
-session = Session(engine)
-
-# Create simple aliases for reflected model classes
-Setting = Base.classes.Setting
-User = Base.classes.User
-Role = Base.classes.Role
-Device = Base.classes.Device
-DeviceType = Base.classes.DeviceType
-Alert = Base.classes.Alert
+Base = declarative_base()
+Session = sessionmaker(bind=engine)
 
 
-# Define some nice repr strings for the automapped classes
-
-def _seetting_repr(self):
-    return '<Setting(id=%d, param="%s", value="%s")>' % (self.id, self.param, self.value)
-
-
-def _setting_get_value(param, default=None):
-    s = session.query(Setting).filter_by(param=param).one_or_none()
-    if s and s.value:
-        return s.value
-    return default
-
-
-Setting.__repr__ = _seetting_repr
-Setting.get_value = staticmethod(_setting_get_value)
+@contextmanager
+def session():
+    """Provide a transactional scope around a series of operations."""
+    db = Session()
+    try:
+        yield db
+        db.commit()
+    except:
+        db.rollback()
+        raise
+    finally:
+        db.close()
 
 
-def _user_repr(self):
-    return '<User(id=%d, name="%s", userid="%s", active=%s)>' % (self.id, self.name, self.userid, self.active==1)
+class Setting(Base):
+    __tablename__ = 'Setting'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    param = Column(String, unique=True)
+    value = Column(String)
+
+    def __repr__(self):
+        return '<Setting(id=%d, param="%s", value="%s")>' % (self.id, self.param, self.value)
+
+    @staticmethod
+    def get_value(param, default=None):
+
+        s = Session().query(Setting).filter_by(param=param).one_or_none()
+        if s and s.value:
+            return s.value
+        return default
 
 
-User.__repr__ = _user_repr
+user_role_assoc_table = Table(
+    'UserRoleAssoc', Base.metadata,
+    Column('user_id', Integer, ForeignKey('User.id')),
+    Column('role_id', String, ForeignKey('Role.id')))
+
+user_device_assoc_table = Table(
+    'UserDeviceAssoc', Base.metadata,
+    Column('user_id', Integer, ForeignKey('User.id')),
+    Column('device_id', Integer, ForeignKey('Device.id')))
 
 
-def _role_repr(self):
-    return '<Role(id="%s", name="%s")>' % (self.id, self.name)
+class User(Base):
+    __tablename__ = 'User'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String)
+    username = Column(String)
+    password = Column(String)
+    active = Column(Boolean, default=True)
+    roles = relationship('Role', secondary=user_role_assoc_table)
+    devices = relationship('Device', secondary=user_device_assoc_table)
+
+    def __repr__(self):
+        return '<User(id=%d, name="%s", userid="%s", active=%s)>' % (self.id, self.name, self.userid, self.active == 1)
 
 
-Role.__repr__ = _role_repr
+class Role(Base):
+    __tablename__ = 'Role'
+
+    id = Column(String(2), primary_key=True)
+    name = Column(String)
+    users = relationship('User', secondary=user_role_assoc_table)
+
+    def __repr__(self):
+        return '<Role(id="%s", name="%s")>' % (self.id, self.name)
 
 
-def _device_repr(self):
-    return '<Device(id=%d, type_id=%d, name="%s", address=%016X)>' % (self.id, self.type_id, self.name, self.address)
+class DeviceType(Base):
+    __tablename__ = 'DeviceType'
+
+    id = Column(Integer, primary_key=True, autoincrement=False)
+    name = Column(String)
+    driver = Column(String)
+    devices = relationship('Device', back_populates='device_type')
+
+    def __repr__(self):
+        return '<DeviceType(id="%s", name="%s", driver="%s")>' % (self.id, self.name, self.driver)
 
 
-Device.__repr__ = _device_repr
+class Device(Base):
+    __tablename__ = 'Device'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    type_id = Column(Integer, ForeignKey('DeviceType.id'))
+    name = Column(String)
+    address = Column(Integer)
+    device_type = relationship('DeviceType', back_populates='devices')
+    alerts = relationship('Alert', back_populates='device')
+
+    def __repr__(self):
+        return '<Device(id=%d, type_id=%d, name="%s", address=%016X)>' % (self.id, self.type_id, self.name, self.address)
 
 
-def _devicetype_repr(self):
-    return '<DeviceType(id="%s", name="%s", driver="%s")>' % (self.id, self.name, self.driver)
+class Alert(Base):
+    __tablename__ = 'Alert'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    device_id = Column(Integer, ForeignKey('Device.id'), nullable=True)
+    severity = Column(Integer)
+    message = Column(String)
+    cleared = Column(Boolean, default=False)
+    device = relationship('Device', back_populates='alerts')
+
+    def __repr__(self):
+        return '<Alert(id="%s", device_id=%d, severity=%d, cleared="%s", message="%s")>' \
+               % (self.id, self.device_id, self.severity, self.cleared==1,
+                  (self.message[:20] + '..') if len(self.message) > 20 else self.message)
 
 
-DeviceType.__repr__ = _devicetype_repr
+def create_tables():
+    logger.info('Creating tables for model objects.')
+    Base.metadata.create_all(engine) #, checkfirst=True)
 
 
-def _alert_repr(self):
-    return '<Alert(id="%s", device_id=%d, severity=%d, cleared="%s", message="%s")>' \
-           % (self.id, self.device_id, self.severity, self.cleared==1,
-              (self.message[:20] + '..') if len(self.message) > 20 else self.message)
-
-
-Alert.__repr__ = _alert_repr
-
+if __name__ == '__main__':
+    create_tables()

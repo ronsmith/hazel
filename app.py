@@ -14,8 +14,9 @@ app = Flask(__name__)
 
 @app.route("/")
 def hello():
-    context = {s.param: s.value for s in session.query(Setting).filter(Setting.param.like('HOME_%')).all()}
-    return render_template('index.html', **context)
+    with session() as db:
+        context = {s.param: s.value for s in db.query(Setting).filter(Setting.param.like('HOME_%')).all()}
+        return render_template('index.html', **context)
 
 
 if __name__ == "__main__":
