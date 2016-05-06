@@ -1,16 +1,17 @@
 # coding=utf-8
 # Author: rsmith
-# Copyright ©2016 iProspect, All Rights Reserved
+# Copyright ©2016 That Ain't Working, All Rights Reserved
 
 import logging
 from contextlib import contextmanager
 from sqlalchemy import create_engine, Table, Column, Integer, String, Boolean, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
+from config import DB_URL
 
 logger = logging.getLogger(__name__)
 
-engine = create_engine('sqlite:///hazel.db') #, echo=True)
+engine = create_engine(DB_URL) #, echo=True)
 Base = declarative_base()
 Session = sessionmaker(bind=engine)
 

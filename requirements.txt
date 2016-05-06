@@ -1,9 +1,10 @@
 flask
-sqlalchemy
+flask-autodoc
 flask-jsglue
+sqlalchemy
 pyserial
 click
 requests
-gunicorn
 pylibmc
 sherlock
+gunicorn
