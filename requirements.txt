@@ -5,3 +5,5 @@ pyserial
 click
 requests
 gunicorn
+pylibmc
+sherlock
