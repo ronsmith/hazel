@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component name="dataSourceStorage">
   <data-source name="hazel.db" uuid="57010fe9-43c4-425a-8e91-4be4a354bb2c">
-    <database-info product="SQLite" version="3.6.23.1" jdbc-version="2.1" driver-name="SQLiteJDBC" driver-version="pure"/>
+    <database-info product="SQLite" version="3.8.9" jdbc-version="2.1" driver-name="SQLiteJDBC" driver-version="native"/>
     <case-sensitivity plain-identifiers="mixed" quoted-identifiers="mixed"/>
     <schema name="" catalog=""/>
     <table name="Alert" schema="" catalog="" type="TABLE">
@@ -10,7 +10,7 @@
       <column name="severity" sqlType="INTEGER" precision="0" scale="-1" nullable="true" jdbcType="4"/>
       <column name="message" sqlType="VARCHAR" precision="0" scale="-1" nullable="true" jdbcType="12"/>
       <column name="cleared" sqlType="BOOLEAN" precision="0" scale="-1" nullable="true" jdbcType="4"/>
-      <primary-key columns="id"/>
+      <primary-key columns="id),foreign key(device_id"/>
       <foreign-key name="#FAKE_Alert_1" columns="device_id" ref-table="Device" ref-schema="" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="1"/>
     </table>
     <table name="Device" schema="" catalog="" type="TABLE">
@@ -18,7 +18,7 @@
       <column name="type_id" sqlType="INTEGER" precision="0" scale="-1" nullable="true" jdbcType="4"/>
       <column name="name" sqlType="VARCHAR" precision="0" scale="-1" nullable="true" jdbcType="12"/>
       <column name="address" sqlType="INTEGER" precision="0" scale="-1" nullable="true" jdbcType="4"/>
-      <primary-key columns="id"/>
+      <primary-key columns="id),foreign key(type_id"/>
       <foreign-key name="#FAKE_Device_1" columns="type_id" ref-table="DeviceType" ref-schema="" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="1"/>
     </table>
     <table name="DeviceType" schema="" catalog="" type="TABLE">
@@ -36,7 +36,7 @@
       <column name="id" sqlType="INTEGER" precision="0" scale="-1" nullable="false" jdbcType="4"/>
       <column name="param" sqlType="VARCHAR" precision="0" scale="-1" nullable="true" jdbcType="12"/>
       <column name="value" sqlType="VARCHAR" precision="0" scale="-1" nullable="true" jdbcType="12"/>
-      <primary-key columns="id"/>
+      <primary-key columns="id),unique (param"/>
     </table>
     <table name="User" schema="" catalog="" type="TABLE">
       <column name="id" sqlType="INTEGER" precision="0" scale="-1" nullable="false" jdbcType="4"/>
@@ -44,7 +44,7 @@
       <column name="username" sqlType="VARCHAR" precision="0" scale="-1" nullable="true" jdbcType="12"/>
       <column name="password" sqlType="VARCHAR" precision="0" scale="-1" nullable="true" jdbcType="12"/>
       <column name="active" sqlType="BOOLEAN" precision="0" scale="-1" nullable="true" jdbcType="4"/>
-      <primary-key columns="id"/>
+      <primary-key columns="id),check (active in (0,1"/>
     </table>
     <table name="UserDeviceAssoc" schema="" catalog="" type="TABLE">
       <column name="user_id" sqlType="INTEGER" precision="0" scale="-1" nullable="true" jdbcType="4"/>
