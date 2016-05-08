@@ -10,13 +10,16 @@ from time import sleep
 START_COMMAND_MODE = b'+++'
 END_COMMAND_MODE = b'ATCN'
 OK = b'OK'
+BROADCAST_ADDR = (0, 0xFFFF)
+COORDINATOR_ADDR = (0, 0)
 
 
 class XBeeTransparentListener(Thread):
 
-    def __init__(self, xbee_serial):
+    def __init__(self, on_received=None):
         super().__init__()
-        self.xbser = xbee_serial
+        self.xbser = None
+        self.on_received = on_received
         self.daemon = True
         self.stopped = False
         self.pause = RLock()
@@ -27,9 +30,16 @@ class XBeeTransparentListener(Thread):
                 try:
                     line = self.xbser.readline()
                     if line:
-                        print('>', line.strip())
+                        self.received(line)
                 except Exception as ex:
                     print(str(ex))
+
+    def received(self, line):
+        """Subclasses may override this method, or provide a callback function when instance is created"""
+        if self.on_received:
+            self.on_received(line)
+        else:
+            print('[XBee]', line.strip())
 
     def stop(self):
         self.stopped = True
@@ -69,8 +79,22 @@ class XBeeTransparent:
         self.dest_high = int(dh, 16)
         self.dest_low = int(dl, 16)
 
-        self.listener = XBeeTransparentListener(self.xbser)
-        self.listener.start()
+        self._listener = None
+
+    @property
+    def listener(self):
+        return self._listener
+
+    @listener.setter
+    def listener(self, listener):
+        self.listener = listener
+        listener.xbser = self.xbser
+        listener.start()
+
+    @listener.deleter
+    def listener(self):
+        self._listener.stop()
+        self._listener = None
 
     def start_command_mode(self):
         self.listener.pause()

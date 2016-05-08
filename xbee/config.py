@@ -3,9 +3,7 @@
 # Copyright ©2016 That Ain't Working, All Rights Reserved
 
 
-XBEE_PORT = '/dev/tty.usbserial-DN01DUAS'
+XBEE_PORT_CONFIG = ('/dev/tty.usbserial-DN01DUAS', 9600, 8, 'N', 1)
 
-ZIGBEE_BROADCAST_LONG_ADDR =  '\0\0\0\0\0\0\xff\xff'
-ZIGBEE_BROADCAST_SHORT_ADDR = '\xff\xff'
-ZIGBEE_COORDINATOR_LONG_ADDR =  '\0\0\0\0\0\0\0\0'
-ZIGBEE_COORDINATOR_SHORT_ADDR = '\0\0'
+WEB_SERVICE_CONFIG = ('localhost', 50001)
+LISTENER_CONFIG = ('localhost', 50002)

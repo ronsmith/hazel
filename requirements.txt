@@ -5,6 +5,4 @@ sqlalchemy
 pyserial
 click
 requests
-pylibmc
-sherlock
 gunicorn
