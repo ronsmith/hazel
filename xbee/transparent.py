@@ -87,7 +87,7 @@ class XBeeTransparent:
 
     @listener.setter
     def listener(self, listener):
-        self.listener = listener
+        self._listener = listener
         listener.xbser = self.xbser
         listener.start()
 
@@ -97,7 +97,7 @@ class XBeeTransparent:
         self._listener = None
 
     def start_command_mode(self):
-        self.listener.pause()
+        self._listener.pause()
         ok = ''
         while ok != OK:
             self.xbser.write(START_COMMAND_MODE)
@@ -108,7 +108,7 @@ class XBeeTransparent:
         while ok != OK:
             self.xbser.write(END_COMMAND_MODE + b'\r')
             ok = self.xbser.readline().strip()
-        self.listener.unpause()
+        self._listener.unpause()
 
     @property
     def dest_address(self):
@@ -153,7 +153,7 @@ class XBeeTransparent:
         return self.transmit(msg, 0x000000000000FFFF)
 
     def close(self):
-        self.listener.stop()
+        self._listener.stop()
         sleep(2)
         self.xbser.close()
 

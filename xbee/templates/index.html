@@ -2,26 +2,47 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Hazel's XBee Microservice</title>
+    <title>Hazel XBee Microservice</title>
+    <script>
+        function send_click() {
+            var dest = document.querySelector('input[name="dest"]:checked').value;
+            var msg = document.querySelector('textarea[name="msg"]').value;
+            var addr = document.querySelector('input[name="addr"]').value;
+            if (dest == "broadcast") {
+                addr = "000000000000FFFF";
+            } else if (dest == "coordinator") {
+                addr = "0000000000000000";
+            } else if (!addr) {
+                alert("You said you would specify an address but you didn't.");
+                return false;
+            }
+            if (!msg) {
+                alert("Message text is required.");
+                return false;
+            }
+
+            return false;
+        }
+    </script>
 </head>
 <body>
-    <h1>Hazel' Xbee Microservice</h1>
+    <h1>Hazel Xbee Microservice</h1>
     <p><a href="{{ url_for('docs') }}">API Reference</a></p>
     <hr>
     <h2>Send a message</h2>
     <form method="post" action="{{ url_for('send') }}">
-        <p>
-            <b>Destination:</b><br>
-            <input type="radio" name="dest" value="broadcast"> Broadcast<br>
-            <input type="radio" name="dest" value="coordinator"> Coordinator<br>
-            <input type="radio" name="dest" value="specaddr"> Specific Address<br>
-            High: <input type="text" name="dh" value="0">  Low: <input type="text" name="dl" value="0">
-        </p>
-        <p>
+        <b>Destination:</b><br>
+        <blockquote>
+            <p><input type="radio" name="dest" value="broadcast"> Broadcast</p>
+            <p><input type="radio" name="dest" value="coordinator"> Coordinator</p>
+            <p><input type="radio" name="dest" value="specaddr"> Specific Address:
+               <input type="text" name="addr"></p>
+        </blockquote>
+        <p valign="top">
             <b>Message:</b><br>
-            <textarea name="msg"></textarea>
+            <textarea name="msg" cols="50"></textarea>
         </p>
-        <p><input type="submit" name="send"> <input type="reset" name="clear"></p>
+        <p><button onclick="send_click()">Send</button></p>
     </form>
 </body>
 </html>

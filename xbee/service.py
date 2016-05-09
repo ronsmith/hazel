@@ -3,7 +3,7 @@
 # Copyright ©2016 That Ain't Working, All Rights Reserved
 
 import logging
-from flask import Flask, render_template, request, abort
+from flask import Flask, render_template, request, abort, redirect
 from flask.ext.autodoc import Autodoc
 from xbee.transparent import XBeeTransparent, XBeeTransparentListener
 from xbee.config import XBEE_PORT_CONFIG, WEB_SERVICE_PORT, BROADCAST_PORT
@@ -12,7 +12,7 @@ from xbee.broadcaster import UDPBroadcaster
 logger = logging.getLogger(__name__)
 
 
-app = Flask('XbeeService')
+app = Flask(__name__)
 auto = Autodoc(app)
 
 bcaster = UDPBroadcaster(BROADCAST_PORT)
@@ -28,7 +28,11 @@ xbee.listener = XBeeTransparentListener(publish_incoming)
 
 @app.route('/')
 def index():
-    render_template('index.html')
+    try:
+        return render_template('index.html')
+    except:
+        logger.exception("Error rendering template: index.html")
+        raise
 
 
 @app.route('/docs')
@@ -37,15 +41,25 @@ def docs():
     try:
         return auto.html(title='Xbee Microservice API')
     except:
-        logger.exception('Failed to render template.')
+        logger.exception('Failed to generate documentation.')
+        raise
 
 
 @app.route('/send', methods=['GET', 'POST'])
+@auto.doc()
 def send():
+    """
+    Send an XBee message
+
+    Parameters
+        addr:   64-bit hex destination address, i.e. 000000000000FFFF
+        msg:    UTF8 message text
+    """
     try:
         addr = int(request.values['addr'], 16)
         msg = request.values['msg']
         xbee.transmit(msg, addr)
+        return redirect('/')
     except KeyError:
         logger.exception('Send request missing required data.')
         abort(400)
