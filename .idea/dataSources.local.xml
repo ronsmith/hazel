@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="dataSourceStorageLocal">
+    <data-source name="hazel.db" uuid="57010fe9-43c4-425a-8e91-4be4a354bb2c">
+      <secret-storage>memory</secret-storage>
+      <auth-required>false</auth-required>
+    </data-source>
+  </component>
+</project>

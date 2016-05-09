@@ -5,7 +5,7 @@
 from serial import Serial
 from threading import Thread, RLock
 from time import sleep
-
+from utils.data import tobytes
 
 START_COMMAND_MODE = b'+++'
 END_COMMAND_MODE = b'ATCN'
@@ -146,7 +146,7 @@ class XBeeTransparent:
     def transmit(self, msg, addr=None):
         if addr:
             self.dest_address = addr
-        self.xbser.write(self._bytes(msg))
+        self.xbser.write(tobytes(msg))
         return True
 
     def broadcast(self, msg):
@@ -162,11 +162,4 @@ class XBeeTransparent:
         return self.xbser.is_open
 
     def write(self, data):
-        return self.xbser.write(self._bytes(data))
-
-    @staticmethod
-    def _bytes(v):
-        if isinstance(v, (bytes, bytearray)):
-            return v
-        else:
-            return bytes(v, 'utf8')
+        return self.xbser.write(tobytes(data))

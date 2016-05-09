@@ -5,5 +5,5 @@
 
 XBEE_PORT_CONFIG = ('/dev/tty.usbserial-DN01DUAS', 9600, 8, 'N', 1)
 
-WEB_SERVICE_CONFIG = ('localhost', 50001)
-LISTENER_CONFIG = ('localhost', 50002)
+WEB_SERVICE_PORT = 50001
+BROADCAST_PORT = 50002

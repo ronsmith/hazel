@@ -18,4 +18,4 @@ while 1:
     data = bytes(datetime.now().strftime('%Y-%m-%d %H:%M'), 'utf8')
     print(data)
     s.sendto(data, ('<broadcast>', MYPORT))
-    sleep(60)
+    sleep(10)

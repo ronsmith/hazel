@@ -6,7 +6,8 @@ import logging
 from flask import Flask, render_template, request, abort
 from flask.ext.autodoc import Autodoc
 from xbee.transparent import XBeeTransparent, XBeeTransparentListener
-from xbee.config import XBEE_PORT_CONFIG, WEB_SERVICE_CONFIG
+from xbee.config import XBEE_PORT_CONFIG, WEB_SERVICE_PORT, BROADCAST_PORT
+from xbee.broadcaster import UDPBroadcaster
 
 logger = logging.getLogger(__name__)
 
@@ -14,9 +15,11 @@ logger = logging.getLogger(__name__)
 app = Flask('XbeeService')
 auto = Autodoc(app)
 
+bcaster = UDPBroadcaster(BROADCAST_PORT)
+
 
 def publish_incoming(line):
-    pass  # TODO
+    bcaster.send(line)
 
 
 xbee = XBeeTransparent(*XBEE_PORT_CONFIG)
@@ -40,10 +43,9 @@ def docs():
 @app.route('/send', methods=['GET', 'POST'])
 def send():
     try:
-        dh = request.values['dh']
-        dl = request.values['dl']
+        addr = int(request.values['addr'], 16)
         msg = request.values['msg']
-        # TODO
+        xbee.transmit(msg, addr)
     except KeyError:
         logger.exception('Send request missing required data.')
         abort(400)
@@ -53,5 +55,5 @@ def send():
 
 
 if __name__ == "__main__":
-    app.run(host=WEB_SERVICE_CONFIG[0], port=WEB_SERVICE_CONFIG[1])
+    app.run(host='localhost', port=WEB_SERVICE_PORT)
 
