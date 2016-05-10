@@ -59,7 +59,7 @@ def send():
         addr = int(request.values['addr'], 16)
         msg = request.values['msg']
         xbee.transmit(msg, addr)
-        return redirect('/')
+        return redirect('/')  # TODO
     except KeyError:
         logger.exception('Send request missing required data.')
         abort(400)

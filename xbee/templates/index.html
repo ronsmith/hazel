@@ -7,12 +7,12 @@
         function send_click() {
             var dest = document.querySelector('input[name="dest"]:checked').value;
             var msg = document.querySelector('textarea[name="msg"]').value;
-            var addr = document.querySelector('input[name="addr"]').value;
+            var addr_field = document.querySelector('input[name="addr"]');
             if (dest == "broadcast") {
-                addr = "000000000000FFFF";
+                addr_field.value = "000000000000FFFF";
             } else if (dest == "coordinator") {
-                addr = "0000000000000000";
-            } else if (!addr) {
+                addr_field.value = "0000000000000000";
+            } else if (!addr_field.value) {
                 alert("You said you would specify an address but you didn't.");
                 return false;
             }
@@ -20,8 +20,7 @@
                 alert("Message text is required.");
                 return false;
             }
-
-            return false;
+            return true;
         }
     </script>
 </head>
