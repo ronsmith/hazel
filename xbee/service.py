@@ -52,14 +52,24 @@ def send():
     Send an XBee message
 
     Parameters
-        addr:   64-bit hex destination address, i.e. 000000000000FFFF
-        msg:    UTF8 message text
+        addr: 64-bit hex destination address, i.e. 000000000000FFFF
+        msg: UTF8 message text
+        interactive: [optional] if "true", this endpoint will redirect to the index page. Defaults to false.
     """
     try:
         addr = int(request.values['addr'], 16)
         msg = request.values['msg']
+        interactive = request.values.get('interactive', False)
+        if interactive:
+            interactive = interactive.lower() == 'true'
+
+        logger.info('Sending to %016X: %s' % (addr, msg))
         xbee.transmit(msg, addr)
-        return redirect('/')  # TODO
+
+        if interactive:
+            return redirect('/')
+        else:
+            return '200 OK'
     except KeyError:
         logger.exception('Send request missing required data.')
         abort(400)

@@ -30,16 +30,17 @@
     <hr>
     <h2>Send a message</h2>
     <form method="post" action="{{ url_for('send') }}">
+        <input type="hidden" name="interactive" value="true">
         <b>Destination:</b><br>
         <blockquote>
-            <p><input type="radio" name="dest" value="broadcast"> Broadcast</p>
-            <p><input type="radio" name="dest" value="coordinator"> Coordinator</p>
-            <p><input type="radio" name="dest" value="specaddr"> Specific Address:
+            <p><input type="radio" name="dest" value="broadcast" id="broadcast_dest"><label for="broadcast_dest"> Broadcast</label</p>
+            <p><input type="radio" name="dest" value="coordinator" id="coordinator_dest"><label for="coordinator_dest"> Coordinator</label></p>
+            <p><input type="radio" name="dest" value="specaddr" id="specaddr_dest"><label for="specaddr_dest"> Specific Address:</label>
                <input type="text" name="addr"></p>
         </blockquote>
         <p valign="top">
-            <b>Message:</b><br>
-            <textarea name="msg" cols="50"></textarea>
+            <b><label for="msg_area">Message:</label></b><br>
+            <textarea name="msg" cols="50" id="msg_area"></textarea>
         </p>
         <p><button onclick="send_click()">Send</button></p>
     </form>
