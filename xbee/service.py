@@ -12,9 +12,11 @@ from xbee.broadcaster import UDPBroadcaster
 logger = logging.getLogger(__name__)
 
 
+logger.info('Initializing Flask App...')
 app = Flask(__name__)
 auto = Autodoc(app)
 
+logger.info('Initializing Broadcaster...')
 bcaster = UDPBroadcaster(BROADCAST_PORT)
 
 
@@ -22,6 +24,7 @@ def publish_incoming(line):
     bcaster.send(line)
 
 
+logger.info('Initializing XBee...')
 xbee = XBeeTransparent(*XBEE_SERIAL_CONFIG)
 xbee.listener = XBeeTransparentListener(publish_incoming)
 
