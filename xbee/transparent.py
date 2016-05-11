@@ -2,10 +2,14 @@
 # Author: rsmith
 # Copyright ©2016 That Ain't Working, All Rights Reserved
 
+import logging
+
 from serial import Serial
 from threading import Thread, RLock
 from time import sleep
 from utils.data import tobytes
+
+logger = logging.getLogger(__name__)
 
 START_COMMAND_MODE = b'+++'
 END_COMMAND_MODE = b'ATCN'
@@ -57,20 +61,27 @@ class XBeeTransparent:
         self.xbser = Serial(port, baud, bits, parity, stop, timeout=2)
 
         ok = ''
+        logger.info('Entering command mode...')
         while ok != OK:
             self.xbser.write(START_COMMAND_MODE)
             ok = self.xbser.readline().strip()
 
+        logger.info('Reading guard time...')
         self.xbser.write(b'ATGT\r')
         gt = self.xbser.readline().strip()
+        logger.info('Reading destination high...')
         self.xbser.write(b'ATDH\r')
         dh = self.xbser.readline().strip()
+        logger.info('Reading destination low...')
         self.xbser.write(b'ATDL\r')
         dl = self.xbser.readline().strip()
+        logger.info('Reading firmware version...')
         self.xbser.write(b'ATVR\r')
         self.firmware_version = self.xbser.readline().strip()
+        logger.info('Reading firmware details...')
         self.xbser.write(b'ATVL\r')
         self.firmware_verbose = self.xbser.readline().strip()
+        logger.info('Setting command mode timeout...')
         self.xbser.write(b'ATCT028F,WR,CN\r')
         for x in range(3):
             self.xbser.readline()
@@ -87,6 +98,7 @@ class XBeeTransparent:
 
     @listener.setter
     def listener(self, listener):
+        logger.info('Setting listener...')
         self._listener = listener
         listener.xbser = self.xbser
         listener.start()
@@ -97,6 +109,7 @@ class XBeeTransparent:
         self._listener = None
 
     def start_command_mode(self):
+        logger.info('Starting command mode...')
         self._listener.pause()
         ok = ''
         while ok != OK:
@@ -104,6 +117,7 @@ class XBeeTransparent:
             ok = self.xbser.readline().strip()
 
     def end_command_mode(self):
+        logger.info('Ending command mode...')
         ok = ''
         while ok != OK:
             self.xbser.write(END_COMMAND_MODE + b'\r')
