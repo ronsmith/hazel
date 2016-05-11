@@ -6,7 +6,7 @@ import logging
 from flask import Flask, render_template, request, abort, redirect
 from flask.ext.autodoc import Autodoc
 from xbee.transparent import XBeeTransparent, XBeeTransparentListener
-from xbee.config import XBEE_PORT_CONFIG, WEB_SERVICE_PORT, BROADCAST_PORT
+from xbee.config import XBEE_SERIAL_CONFIG, WEB_SERVICE_PORT, BROADCAST_PORT
 from xbee.broadcaster import UDPBroadcaster
 
 logger = logging.getLogger(__name__)
@@ -22,7 +22,7 @@ def publish_incoming(line):
     bcaster.send(line)
 
 
-xbee = XBeeTransparent(*XBEE_PORT_CONFIG)
+xbee = XBeeTransparent(*XBEE_SERIAL_CONFIG)
 xbee.listener = XBeeTransparentListener(publish_incoming)
 
 
