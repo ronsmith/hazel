@@ -6,7 +6,7 @@ import os
 from logging.config import dictConfig as logger_config
 
 
-XBEE_SERIAL_PORT = os.environ.get('XBEE_SERIAL_PORT', '/dev/ttyAMA0')
+XBEE_SERIAL_PORT = os.environ.get('XBEE_SERIAL_PORT', '/dev/ttyUSB0')
 
 XBEE_SERIAL_CONFIG = (XBEE_SERIAL_PORT, 9600, 8, 'N', 1)
 
